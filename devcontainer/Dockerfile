@@ -6,7 +6,7 @@ ARG uid=1000
 ARG gid=1000
 #ARG addonpkgs="bash-completion tmux vim-nox vim-ale vim-airline vim-airline-themes vim-youcompleteme"
 ARG addonpkgs="bash-completion jq python3-paramiko tmux vim-ale vim-airline vim-common vim-fugitive vim-nox vim-youcompleteme"
-ARG terraform_version=1.7.4
+ARG terraform_version=1.7.5
 ARG helm_version=3.14.2
 ARG arch=amd64
 
@@ -16,8 +16,6 @@ RUN /usr/bin/apt update -y \
   && /usr/bin/curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
   && /usr/bin/chmod 644 /usr/share/keyrings/hashicorp-archive-keyring.gpg \
   && /bin/echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/apt_releases_hashicorp_com.list \
-  && /usr/bin/apt update -y \
-  && /usr/bin/apt install -y packer \
   && /usr/bin/apt clean -y \
   && /usr/bin/curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_${arch}.zip \
   && /usr/bin/unzip -d /usr/local/bin /tmp/terraform.zip \
