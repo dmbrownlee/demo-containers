@@ -1,5 +1,12 @@
 # The Development Container
-The end goal of the exercises in this repo is to learn how to automate the provisioning and configuration of virtual machines running in a Proxmox cluster.  To achieve this, we are going to need to use multiple tools including Packer, Terraform, and Ansible.  Rather than try to write instructions for how to install multiple versions of these tools across many different Linux distrubutions, we are going to create a container to give us a consistent, repeatable environment to work with.
+The end goal of the exercises in the demo-proxmox-terraform repo is to learn how to automate the provisioning and configuration of virtual machines running in a Proxmox cluster.  To achieve this, we are going to need to use multiple tools including Debian cloud-init images, Terraform, and Ansible.  Rather than try to write instructions for how to install multiple versions of these tools across many different Linux distrubutions, we are going to create a container to give us a consistent, repeatable environment to work with.
+
+# Running the pre-built container
+The instructions below describe how you can build your own container image from the Dockerfile in case you would like to modify it for your needs.  If you just want to use the image I've already uploaded to Docker Hub and you already have podman installed, you can just run:
+
+```shell
+podman run -it --rm --name mydevcontainer -v mydevhome:/home/$USER -p 8300:8300 dmbrownlee/demo-devcontainer:latest
+```
 
 # Building the `demo-devcontainer` container image
 The first step is to create a container image.  The `Dockerfile` in this directory will build a container image based on Debian Bookworm and install the tools we need for the rest of the project.
@@ -31,7 +38,7 @@ podman image ls
 The container image is like a hard drive waiting to be booted.  To start a container based on this image and get a shell prompt, you use the `podman container run...` command.
 
 ```shell
-podman container run -it --rm --name mydevcontainer -v mydevhome:/home/$USER -p 8300:8300 localhost/demo-devcontainer:latest
+podman run -it --rm --name mydevcontainer -v mydevhome:/home/$USER -p 8300:8300 localhost/demo-devcontainer:latest
 ```
 
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Option&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|Explanation|
@@ -45,9 +52,8 @@ After the command line options, the `localhost/demo-devcontainer:latest` argumen
 
 > Note: The hostname within the container is the first part of the container's ID so the host part of your shell prompt will be a hexideecimal string.
 
-Since we preinstalled the tools we will be using, you should be able to confirm you can get the versions of packer and terraform.
+Since we preinstalled the tools we will be using, you should be able to confirm you can get the version of terraform.
 ```shell
-packer --version
 terraform --version
 ```
 
@@ -60,7 +66,7 @@ You can verify nano is installed by entering `nano` at the shell prompt (`Ctrl-x
 
 Now type `exit` at the shell prompt to exit and destroy the container.  Create a new container using the same `podman run...` command you used last time.  If you try to start nano now, the shell will report `bash: nano: command not found`.  This is because apt installs nano outside of our home directory.  However, running `ls` in your home directory shows the `demo-proxmox-terraform` directory still exists.
 
-If you know you would like to tweak your git config or vim settings before continuing, free free.  When you are ready to continue, proceed to the `~/demo-proxmox-terraform/packer` directory (within the container) and follow the instructions in the README.md file there.
+If you know you would like to tweak your git config or vim settings before continuing, feel free.  When you are ready to continue, proceed to the `~/demo-proxmox-terraform/packer` directory (within the container) and follow the instructions in the README.md file there.
 
 This exercise covered the absolute minimum needed to get a working container.  Consider learning more about containers as time permits.
 - [Podman Documentation](https://podman.io/docs)
