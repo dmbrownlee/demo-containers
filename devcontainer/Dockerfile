@@ -13,13 +13,14 @@ ARG arch=amd64
 
 RUN /usr/bin/apt update -y \
   && /usr/bin/apt install -y bind9-dnsutils curl git gpg inetutils-ping lsb-release man openssh-client python3 python3-pip python3-venv python3-bcrypt software-properties-common sshpass sudo ${addonpkgs} unzip \
-  && /usr/bin/curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-  && /usr/bin/chmod 644 /usr/share/keyrings/hashicorp-archive-keyring.gpg \
-  && /bin/echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/apt_releases_hashicorp_com.list \
-  && /usr/bin/apt clean -y \
-  && /usr/bin/curl -o /tmp/terraform.zip https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_${arch}.zip \
-  && /usr/bin/unzip -d /usr/local/bin /tmp/terraform.zip \
-  && /usr/bin/rm /tmp/terraform.zip \
+
+  && /usr/bin/curl -fsSL https://get.opentofu.org/opentofu.gpg | /usr/bin/tee /etc/apt/keyrings/opentofu.gpg >/dev/null \
+  && /usr/bin/curl -fsSL https://packages.opentofu.org/opentofu/tofu/gpgkey | gpg --no-tty --batch --dearmor -o /etc/apt/keyrings/opentofu-repo.gpg >/dev/null \
+  && /usr/bin/chmod a+r /etc/apt/keyrings/opentofu.gpg /etc/apt/keyrings/opentofu-repo.gpg \
+  && /bin/echo -e "deb [signed-by=/etc/apt/keyrings/opentofu.gpg,/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main\ndeb-src [signed-by=/etc/apt/keyrings/opentofu.gpg,/etc/apt/keyrings/opentofu-repo.gpg] https://packages.opentofu.org/opentofu/tofu/any/ any main\n" | /usr/bin/tee /etc/apt/sources.list.d/opentofu.list > /dev/null \
+  && /usr/bin/chmod a+r /etc/apt/sources.list.d/opentofu.list \
+  && /usr/bin/apt update -y \
+  && /usr/bin/apt install -y tofu \
   && /usr/bin/curl -o /root/helm.tar.gz https://get.helm.sh/helm-v${helm_version}-linux-amd64.tar.gz \
   && /usr/bin/tar xvf /root/helm.tar.gz -C /root \
   && /usr/bin/cp /root/linux-amd64/helm /usr/local/bin/helm \
@@ -30,8 +31,8 @@ RUN /usr/bin/apt update -y \
 
 USER ${username}
 WORKDIR /home/${username}
-RUN /bin/echo -e '\nif [ -f ~/.venv/ansible/bin/activate ]; then\n  . ~/.venv/ansible/bin/activate\nfi' | tee -a ~/.bashrc \
-  && /bin/echo -e '\neval $(/usr/bin/ssh-agent -s)' | tee -a ~/.bashrc \
+RUN /bin/echo -e '\nif [ -f ~/.venv/ansible/bin/activate ]; then\n  . ~/.venv/ansible/bin/activate\nfi' | /usr/bin/tee -a ~/.bashrc \
+  && /bin/echo -e '\neval $(/usr/bin/ssh-agent -s)' | /usr/bin/tee -a ~/.bashrc \
   && /usr/local/bin/terraform -install-autocomplete \
   && /usr/bin/git clone https://github.com/dmbrownlee/demo-proxmox-terraform.git \
   && /usr/bin/mkdir .venv \
