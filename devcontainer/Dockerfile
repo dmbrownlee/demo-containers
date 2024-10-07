@@ -6,8 +6,7 @@ ARG uid=1000
 ARG gid=1000
 #ARG addonpkgs="bash-completion tmux vim-nox vim-ale vim-airline vim-airline-themes vim-youcompleteme"
 ARG addonpkgs="bash-completion jq python3-paramiko tmux vim-ale vim-airline vim-common vim-fugitive vim-nox vim-youcompleteme"
-ARG terraform_version=1.7.5
-ARG helm_version=3.14.2
+ARG helm_version=3.16.1
 ARG arch=amd64
 
 
@@ -21,6 +20,7 @@ RUN /usr/bin/apt update -y \
   && /usr/bin/chmod a+r /etc/apt/sources.list.d/opentofu.list \
   && /usr/bin/apt update -y \
   && /usr/bin/apt install -y tofu \
+  && ln -s /usr/bin/tofu /usr/bin/terraform \
   && /usr/bin/curl -o /root/helm.tar.gz https://get.helm.sh/helm-v${helm_version}-linux-amd64.tar.gz \
   && /usr/bin/tar xvf /root/helm.tar.gz -C /root \
   && /usr/bin/cp /root/linux-amd64/helm /usr/local/bin/helm \
@@ -38,6 +38,7 @@ RUN /bin/echo -e '\nif [ -f ~/.venv/ansible/bin/activate ]; then\n  . ~/.venv/an
   && /usr/bin/mkdir .venv \
   && /usr/bin/python3 -m venv .venv/ansible \
   && /bin/bash -c 'source ~/.venv/ansible/bin/activate && /usr/bin/env pip3 install ansible' \
+  && /bin/bash -c '~/.venv/ansible/bin/ansible-galaxy collection install kubernetes.core' \
   && /bin/bash -c '~/.venv/ansible/bin/ansible-galaxy collection install cloud.terraform'
 
 ENTRYPOINT ["/bin/bash"]
