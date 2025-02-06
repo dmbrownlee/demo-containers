@@ -1,0 +1,20 @@
+---
+name: devstack
+services:
+  gitlab-server:
+    image: 'gitlab/gitlab-ce:latest'
+    container_name: gitlab-server
+    ports:
+      - '${GITLAB_PORT}:80'
+    environment:
+      GITLAB_ROOT_EMAIL: "${GITLAB_USER}@${TLD}"
+      GITLAB_ROOT_PASSWORD: "${GITLAB_PASSWORD}"
+    volumes:
+      - gitlab-config:/etc/gitlab
+      - gitlab-data:/var/opt/gitlab
+      - gitlab-log:/var/log/gitlab
+
+volumes:
+  gitlab-config:
+  gitlab-data:
+  gitlab-log:
