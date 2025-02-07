@@ -1,0 +1,29 @@
+---
+name: ${PROJECT_NAME}
+services:
+  bind9:
+    hostname: ${PROJECT_NAME}
+    domainname: ${LOCAL_DOMAIN}
+    image: internetsystemsconsortium/bind9:9.20
+    container_name: ${PROJECT_NAME}
+    ports:
+      - "${BIND9_HOST_PORT}:53/udp"
+      - "${BIND9_HOST_PORT}:53/tcp"
+    volumes:
+      - ${PROJECT_NAME}-conf:/etc/bind
+      - ${PROJECT_NAME}-cache:/var/cache/bind
+      - ${PROJECT_NAME}-lib:/var/lib/bind
+      - ${PROJECT_NAME}-log:/var/log
+    restart: unless-stopped
+    networks:
+      ix-portainer_default:
+
+volumes:
+  ${PROJECT_NAME}-conf:
+  ${PROJECT_NAME}-cache:
+  ${PROJECT_NAME}-lib:
+  ${PROJECT_NAME}-log:
+
+networks:
+  ix-portainer_default:
+    external: true
