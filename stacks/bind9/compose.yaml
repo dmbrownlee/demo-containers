@@ -10,19 +10,19 @@ services:
       - "${BIND9_HOST_PORT}:53/udp"
       - "${BIND9_HOST_PORT}:53/tcp"
     volumes:
-      - ${PROJECT_NAME}-conf:/etc/bind
-      - ${PROJECT_NAME}-cache:/var/cache/bind
-      - ${PROJECT_NAME}-lib:/var/lib/bind
-      - ${PROJECT_NAME}-log:/var/log
+      - bind9-conf:/etc/bind
+      - bind9-cache:/var/cache/bind
+      - bind9-lib:/var/lib/bind
+      - bind9-log:/var/log
     restart: unless-stopped
     networks:
       ix-portainer_default:
 
 volumes:
-  ${PROJECT_NAME}-conf:
-  ${PROJECT_NAME}-cache:
-  ${PROJECT_NAME}-lib:
-  ${PROJECT_NAME}-log:
+  bind9-conf:
+  bind9-cache:
+  bind9-lib:
+  bind9-log:
 
 networks:
   ix-portainer_default:
