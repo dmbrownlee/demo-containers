@@ -12,7 +12,13 @@ services:
     volumes:
       - cache:/var/cache/apt-cacher-ng
       - log:/var/log/apt-cacher-ng
+    networks:
+      ix-portainer_default:
 
 volumes:
   cache:
   log:
+
+networks:
+  ix-portainer_default:
+    external: true
