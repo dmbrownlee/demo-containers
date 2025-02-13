@@ -1,0 +1,18 @@
+---
+name: apt-cacher-ng
+services:
+  apt-cacher-ng:
+    image: dmbrownlee/apt-cacher-ng:latest
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: apt-cacher-ng
+    ports:
+      - '3142:3142'
+    volumes:
+      - cache:/var/cache/apt-cacher-ng
+      - log:/var/log/apt-cacher-ng
+
+volumes:
+  cache:
+  log:
