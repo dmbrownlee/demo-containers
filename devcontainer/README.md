@@ -1,3 +1,6 @@
+# ========== D E P R E C A T E D !!! ==========
+> [!WARNING]
+> This container is going away!  It's replacement can be found at [https://github.com/dmbrownlee/oci-controller](https://github.com/dmbrownlee/oci-controller)
 # The Development Container
 The end goal of the exercises in the demo-proxmox-terraform repo is to learn how to automate the provisioning and configuration of virtual machines running in a Proxmox cluster.  To achieve this, we are going to need to use multiple tools including Debian cloud-init images, Terraform, and Ansible.  Rather than try to write instructions for how to install multiple versions of these tools across many different Linux distrubutions, we are going to create a container to give us a consistent, repeatable environment to work with.
 
