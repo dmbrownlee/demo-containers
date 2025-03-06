@@ -10,33 +10,41 @@ services:
       - ns1-cache:/var/cache/bind
       - ns1-lib:/var/lib/bind
       - ns1-log:/var/log
-    #restart: unless-stopped
+    restart: unless-stopped
     networks:
       net1:
         ipv4_address: ${NS1_IP}
-  ns2:
-    hostname: ns2
-    domainname: ${LOCAL_DOMAIN}
-    image: internetsystemsconsortium/bind9:9.20
+  mail:
+    hostname: mail.${LOCAL_DOMAIN}
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    container_name: mail
     volumes:
-      - ns2-conf:/etc/bind
-      - ns2-cache:/var/cache/bind
-      - ns2-lib:/var/lib/bind
-      - ns2-log:/var/log
-    #restart: unless-stopped
+      - mail-data:/var/mail/
+      - mail-state:/var/mail-state/
+      - mail-logs:/var/log/mail/
+      - mail-conf:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    stop_grace_period: 1m
+    # Uncomment if using `ENABLE_FAIL2BAN=1`:
+    # cap_add:
+    #   - NET_ADMIN
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
     networks:
-      net1:
-        ipv4_address: ${NS2_IP}
-
+      SERVER_VLAN:
+        ipv4_address: ${MAIL_IP}
 volumes:
   ns1-conf:
   ns1-cache:
   ns1-lib:
   ns1-log:
-  ns2-conf:
-  ns2-cache:
-  ns2-lib:
-  ns2-log:
+  mail-data:
+  mail-state:
+  mail-logs:
+  mail-conf:
 
 networks:
   net1:
