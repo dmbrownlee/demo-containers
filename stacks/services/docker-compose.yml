@@ -15,6 +15,20 @@ services:
       net1:
         ipv4_address: ${NS1_IP}
 
+  apt-cacher-ng:
+    hostname: aptcache
+    image: dmbrownlee/apt-cacher-ng:latest
+    build:
+      context: .
+      dockerfile: apt-cacher-ng/Dockerfile
+    container_name: aptcache
+    volumes:
+      - aptcache-cache:/var/cache/apt-cacher-ng
+      - aptcache-log:/var/log/apt-cacher-ng
+    networks:
+      net1:
+        ipv4_address: ${APTCACHE_IP}
+
   netbootxyz:
     image: ghcr.io/netbootxyz/netbootxyz
     container_name: netbootxyz
@@ -71,6 +85,8 @@ volumes:
   ns1-cache:
   ns1-lib:
   ns1-log:
+  aptcache-cache:
+  aptcache-log:
   netbootxyz-conf:
   netbootxyz-assets:
   mail-data:
