@@ -48,7 +48,7 @@ services:
       timeout: 3s
       retries: 0
     networks:
-      SERVER_VLAN:
+      net1:
         ipv4_address: ${MAIL_IP}
 volumes:
   ns1-conf:
