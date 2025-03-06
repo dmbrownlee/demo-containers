@@ -1,0 +1,54 @@
+---
+name: ${PROJECT_NAME}
+services:
+  ns1:
+    hostname: ns1
+    domainname: ${LOCAL_DOMAIN}
+    image: internetsystemsconsortium/bind9:9.20
+    volumes:
+      - ns1-conf:/etc/bind
+      - ns1-cache:/var/cache/bind
+      - ns1-lib:/var/lib/bind
+      - ns1-log:/var/log
+    #restart: unless-stopped
+    networks:
+      net1:
+        ipv4_address: ${NS1_IP}
+  ns2:
+    hostname: ns2
+    domainname: ${LOCAL_DOMAIN}
+    image: internetsystemsconsortium/bind9:9.20
+    volumes:
+      - ns2-conf:/etc/bind
+      - ns2-cache:/var/cache/bind
+      - ns2-lib:/var/lib/bind
+      - ns2-log:/var/log
+    #restart: unless-stopped
+    networks:
+      net1:
+        ipv4_address: ${NS2_IP}
+
+volumes:
+  ns1-conf:
+  ns1-cache:
+  ns1-lib:
+  ns1-log:
+  ns2-conf:
+  ns2-cache:
+  ns2-lib:
+  ns2-log:
+
+networks:
+  net1:
+    attachable: true
+    driver: ipvlan
+    driver_opts:
+      parent: eno2
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: ${NET1_CIDR}
+          ip_range: ${NET1_POOL_CIDR}
+          gateway: ${NET1_GW}
+    name: ${NET1_NAME}
