@@ -26,14 +26,5 @@ volumes:
 
 networks:
   net1:
-    attachable: true
-    driver: ipvlan
-    driver_opts:
-      parent: eno2
-    enable_ipv6: false
-    ipam:
-      driver: default
-      config:
-        - subnet: ${LAN_CIDR}
-          gateway: ${LAN_GW}
+    external: true
     name: ${LAN_NAME}
