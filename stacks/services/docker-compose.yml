@@ -1,37 +1,68 @@
 ---
 name: ${PROJECT_NAME}
 services:
-  ns1:
-    hostname: ns1
+  kea-db:
+    hostname: kea-db.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
-    image: internetsystemsconsortium/bind9:9.20
+    container_name: kea-db
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U keadb -d keadb -c 'SELECT version FROM schema_version'"]
+    environment:
+      POSTGRES_PASSWORD: keatest
+      POSTGRES_USER: keadb
     volumes:
-      - ns1-conf:/etc/bind
-      - ns1-cache:/var/cache/bind
-      - ns1-lib:/var/lib/bind
-      - ns1-log:/var/log
-    restart: unless-stopped
+      - database:/var/lib/posgresql
+      - type: bind
+        source: ./initdb  # database setup script from kea for first run
+        target: /docker-entrypoint-initdb.d
     networks:
-      net1:
-        ipv4_address: ${NS1_IP}
+      kea-20-backend:
+
+  kea-dhcp4:
+    hostname: kea-dhcp4.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
+    container_name: kea-dhcp4
+    image: kea-dhcp4:${KEA_VERSION}
+    restart: always
+    depends_on:  # delay start until database is ready
+      kea-db:
+        condition: service_healthy
+    volumes:
+      - kea-conf:/etc/kea
+      - kea4-var:/var/lib/kea
+    networks:
+      net1:  # network that binds container to host network interface.
+        ipv4_address: ${DHCP_IP}  # ip for kea4 server
+      kea-backend:  # internal network for communication with database
 
   apt-cacher-ng:
-    hostname: aptcache
+    hostname: aptcache.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
+    container_name: apt-cacher-ng
     image: dmbrownlee/apt-cacher-ng:latest
+    restart: unless-stopped
     build:
       context: .
       dockerfile: apt-cacher-ng/Dockerfile
-    container_name: aptcache
     volumes:
       - aptcache-cache:/var/cache/apt-cacher-ng
       - aptcache-log:/var/log/apt-cacher-ng
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
         ipv4_address: ${APTCACHE_IP}
 
   netbootxyz:
-    image: ghcr.io/netbootxyz/netbootxyz
+    hostname: netbootxyz.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
     container_name: netbootxyz
+    image: ghcr.io/netbootxyz/netbootxyz
+    restart: unless-stopped
     environment:
       - MENU_VERSION=2.0.84  # optional
       - NGINX_PORT=80  # optional
@@ -39,22 +70,26 @@ services:
     volumes:
       - netbootxyz-conf:/config  # optional
       - netbootxyz-assets:/assets  # optional
-    restart: unless-stopped
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
         ipv4_address: ${NETBOOT_IP}
 
   mail:
     hostname: mail.${LOCAL_DOMAIN}
-    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    domainname: ${LOCAL_DOMAIN}
     container_name: mail
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    restart: unless-stopped
     volumes:
       - mail-data:/var/mail/
       - mail-state:/var/mail-state/
       - mail-logs:/var/log/mail/
       - mail-conf:/tmp/docker-mailserver/
       - /etc/localtime:/etc/localtime:ro
-    restart: always
     stop_grace_period: 1m
     # Uncomment if using `ENABLE_FAIL2BAN=1`:
     # cap_add:
@@ -63,28 +98,33 @@ services:
       test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
       timeout: 3s
       retries: 0
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
         ipv4_address: ${MAIL_IP}
 
   homepage:
-    hostname: homepage
-    image: ghcr.io/gethomepage/homepage:latest
+    hostname: homepage.
+    domainname: ${LOCAL_DOMAIN}
     container_name: homepage
-    networks:
-      net1:
-        ipv4_address: ${HOMEPAGE_IP}
+    image: ghcr.io/gethomepage/homepage:latest
+    restart: unless-stopped
     volumes:
       - homepage-config:/app/config
       - homepage-images:/app/public/images
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: unless-stopped
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:
+        ipv4_address: ${HOMEPAGE_IP}
   
 volumes:
-  ns1-conf:
-  ns1-cache:
-  ns1-lib:
-  ns1-log:
   aptcache-cache:
   aptcache-log:
   netbootxyz-conf:
@@ -98,15 +138,5 @@ volumes:
 
 networks:
   net1:
-    attachable: true
-    driver: ipvlan
-    driver_opts:
-      parent: eno2
-    enable_ipv6: false
-    ipam:
-      driver: default
-      config:
-        - subnet: ${NET1_CIDR}
-          ip_range: ${NET1_POOL_CIDR}
-          gateway: ${NET1_GW}
-    name: ${NET1_NAME}
+    external: true
+    name: ${LAN_NAME}
