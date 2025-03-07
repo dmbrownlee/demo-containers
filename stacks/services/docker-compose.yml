@@ -10,13 +10,13 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "psql -U keadb -d keadb -c 'SELECT version FROM schema_version'"]
     environment:
-      POSTGRES_PASSWORD: keatest
-      POSTGRES_USER: keadb
+      POSTGRES_PASSWORD: ${KEA_DB_PASSWORD}
+      POSTGRES_USER: ${KEA_DB_USER}
     volumes:
-      - database:/var/lib/posgresql
-      - type: bind
-        source: ./initdb  # database setup script from kea for first run
-        target: /docker-entrypoint-initdb.d
+      - kea-db:/var/lib/posgresql
+        #      - type: bind
+        #source: ./kea-dhcp/initdb
+        #target: /docker-entrypoint-initdb.d
     networks:
       kea-20-backend:
 
@@ -34,7 +34,7 @@ services:
       - kea4-var:/var/lib/kea
     networks:
       net1:  # network that binds container to host network interface.
-        ipv4_address: ${DHCP_IP}  # ip for kea4 server
+        ipv4_address: ${KEA_DHCP4_IP}  # ip for kea4 server
       kea-backend:  # internal network for communication with database
 
   apt-cacher-ng:
@@ -66,7 +66,7 @@ services:
     environment:
       - MENU_VERSION=2.0.84  # optional
       - NGINX_PORT=80  # optional
-      - WEB_APP_PORT=3001  # optional
+      - WEB_APP_PORT=3000  # optional
     volumes:
       - netbootxyz-conf:/config  # optional
       - netbootxyz-assets:/assets  # optional
@@ -135,6 +135,9 @@ volumes:
   mail-conf:
   homepage-config:
   homepage-images:
+  kea-conf:
+  kea-db:
+  kea4-var:
 
 networks:
   net1:
