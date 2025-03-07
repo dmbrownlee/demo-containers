@@ -24,7 +24,7 @@ services:
     hostname: kea-dhcp4.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
     container_name: kea-dhcp4
-    image: kea-dhcp4:${KEA_VERSION}
+    image: docker.cloudsmith.io/isc/docker/kea-dhcp4:${KEA_VERSION}
     restart: always
     depends_on:  # delay start until database is ready
       kea-db:
