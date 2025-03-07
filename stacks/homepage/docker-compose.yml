@@ -1,16 +1,28 @@
 ---
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:latest
+    hostname: homepage.
+    domainname: ${LOCAL_DOMAIN}
     container_name: homepage
-    ports:
-      - ${HOMEPAGE_PORT}:3000
-    volumes:
-      - homepage-config:/app/config
-      - homepage-images:/app/public/images
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    image: ghcr.io/gethomepage/homepage:latest
     restart: unless-stopped
-
+    volumes:
+      - config:/app/config
+      - images:/app/public/images
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:
+        ipv4_address: ${HOMEPAGE_IP}
+  
 volumes:
-  homepage-config:
-  homepage-images:
+  config:
+  images:
+
+networks:
+  net1:
+    external: true
+    name: ${LAN_NAME}

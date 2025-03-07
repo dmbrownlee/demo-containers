@@ -1,0 +1,41 @@
+---
+name: ${PROJECT_NAME}
+services:
+  mail:
+    hostname: mail.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
+    container_name: mail
+    image: ghcr.io/docker-mailserver/docker-mailserver:latest
+    restart: unless-stopped
+    volumes:
+      - data:/var/mail/
+      - state:/var/mail-state/
+      - logs:/var/log/mail/
+      - conf:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    stop_grace_period: 1m
+    # Uncomment if using `ENABLE_FAIL2BAN=1`:
+    # cap_add:
+    #   - NET_ADMIN
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:
+        ipv4_address: ${MAIL_IP}
+
+volumes:
+  data:
+  state:
+  logs:
+  conf:
+
+networks:
+  net1:
+    external: true
+    name: ${LAN_NAME}
