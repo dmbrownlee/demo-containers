@@ -1,29 +1,39 @@
 ---
 name: ${PROJECT_NAME}
 services:
-  bind9:
-    hostname: ${PROJECT_NAME}
+  ns1:
+    hostname: ${PROJECT_NAME}.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
-    image: internetsystemsconsortium/bind9:9.20
     container_name: ${PROJECT_NAME}
-    ports:
-      - "${BIND9_HOST_PORT}:53/udp"
-      - "${BIND9_HOST_PORT}:53/tcp"
+    image: internetsystemsconsortium/bind9:9.20
     volumes:
-      - bind9-conf:/etc/bind
-      - bind9-cache:/var/cache/bind
-      - bind9-lib:/var/lib/bind
-      - bind9-log:/var/log
+      - conf:/etc/bind
+      - cache:/var/cache/bind
+      - lib:/var/lib/bind
+      - log:/var/log
     restart: unless-stopped
+    #dns: 127.0.0.1
+    dns_search: ${LOCAL_DOMAIN}
     networks:
-      ix-portainer_default:
+      net1:
+        ipv4_address: ${NS_IP}
 
 volumes:
-  bind9-conf:
-  bind9-cache:
-  bind9-lib:
-  bind9-log:
+  conf:
+  cache:
+  lib:
+  log:
 
 networks:
-  ix-portainer_default:
-    external: true
+  net1:
+    attachable: true
+    driver: ipvlan
+    driver_opts:
+      parent: eno2
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: ${LAN_CIDR}
+          gateway: ${LAN_GW}
+    name: ${LAN_NAME}
