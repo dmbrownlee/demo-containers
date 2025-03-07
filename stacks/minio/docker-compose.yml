@@ -1,0 +1,56 @@
+version: '3.7'
+services:
+  minio1:
+    hostname: minio1.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
+    image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
+    command: server --console-address ":9001" http://minio1/data{1...2}
+    expose:
+      - "9000"
+      - "9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - data1-1:/data1
+      - data1-2:/data2
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      minio-backend:
+
+  nginx:
+    hostname: minio.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
+    image: nginx:1.19.2-alpine
+    containername: nginx
+    volumes:
+      - nginx-conf:/etc/nginx:ro
+    depends_on:
+      - minio1
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:
+        ipv4_address: ${MINIO_IP}
+      minio-backend:
+
+volumes:
+  data1-1:
+  data1-2:
+  nginx-conf:
+
+networks:
+  net1:
+    external: true
+    name: ${LAN_NAME}
+  minio-backend:
