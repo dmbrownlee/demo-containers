@@ -18,7 +18,7 @@ services:
         #source: ./kea-dhcp/initdb
         #target: /docker-entrypoint-initdb.d
     networks:
-      kea-20-backend:
+      kea-backend:
 
   kea-dhcp4:
     hostname: kea-dhcp4.${LOCAL_DOMAIN}
@@ -143,3 +143,4 @@ networks:
   net1:
     external: true
     name: ${LAN_NAME}
+  kea-backend:
