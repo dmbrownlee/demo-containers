@@ -4,8 +4,8 @@ services:
     hostname: pgadmin.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
     image: dpage/pgadmin4
+    restart: unless-stopped
     container_name: pgadmin
-    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}

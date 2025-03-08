@@ -4,6 +4,7 @@ services:
     hostname: minio1.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
     image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
+    restart: unless-stopped
     container_name: minio1
     command: server --console-address ":9001" http://minio1/data{1...2}
     expose:
@@ -31,6 +32,7 @@ services:
     hostname: minio.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
     image: nginx:1.19.2-alpine
+    restart: unless-stopped
     container_name: nginx
     volumes:
       - nginx-conf:/etc/nginx:ro

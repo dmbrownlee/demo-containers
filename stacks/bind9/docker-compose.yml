@@ -6,12 +6,12 @@ services:
     domainname: ${LOCAL_DOMAIN}
     container_name: ${PROJECT_NAME}
     image: internetsystemsconsortium/bind9:9.20
+    restart: unless-stopped
     volumes:
       - conf:/etc/bind
       - cache:/var/cache/bind
       - lib:/var/lib/bind
       - log:/var/log
-    restart: unless-stopped
     dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:

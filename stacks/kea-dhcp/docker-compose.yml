@@ -6,7 +6,7 @@ services:
 #    domainname: ${LOCAL_DOMAIN}
 #    container_name: kea-db
 #    image: postgres
-#    restart: always
+#    restart: unless-stopped
 #    healthcheck:
 #      test: ["CMD-SHELL", "psql -U keadb -d keadb -c 'SELECT version FROM schema_version'"]
 #    environment:
@@ -29,7 +29,7 @@ services:
     domainname: ${LOCAL_DOMAIN}
     container_name: kea-dhcp4
     image: docker.cloudsmith.io/isc/docker/kea-dhcp4:${KEA_VERSION}
-    restart: always
+    restart: unless-stopped
 #    depends_on:  # delay start until database is ready
 #      kea-db:
 #        condition: service_healthy
