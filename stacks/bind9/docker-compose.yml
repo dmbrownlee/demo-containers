@@ -12,11 +12,10 @@ services:
       - lib:/var/lib/bind
       - log:/var/log
     restart: unless-stopped
-    #dns: 127.0.0.1
     dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
-        ipv4_address: ${NS_IP}
+        ipv4_address: ${THIS_IP}
 
 volumes:
   conf:

@@ -16,7 +16,7 @@ services:
     dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
-        ipv4_address: ${HOMEPAGE_IP}
+        ipv4_address: ${THIS_IP}
   
 volumes:
   config:

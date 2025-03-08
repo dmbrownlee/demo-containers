@@ -19,7 +19,7 @@ services:
     dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
-        ipv4_address: ${APTCACHE_IP}
+        ipv4_address: ${THIS_IP}
 
 volumes:
   cache:

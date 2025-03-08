@@ -27,7 +27,7 @@ services:
     dns_search: ${LOCAL_DOMAIN}
     networks:
       net1:
-        ipv4_address: ${MAIL_IP}
+        ipv4_address: ${THIS_IP}
 
 volumes:
   data:
