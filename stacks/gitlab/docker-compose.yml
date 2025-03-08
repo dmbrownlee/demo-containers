@@ -1,20 +1,33 @@
 ---
-name: devstack
+name: gitlab
 services:
-  gitlab-server:
+  gitlab:
+    hostname: gitlab.${LOCAL_DOMAIN}
+    domainname: ${LOCAL_DOMAIN}
     image: 'gitlab/gitlab-ce:latest'
-    container_name: gitlab-server
-    ports:
-      - '${GITLAB_PORT}:80'
+    container_name: gitlab
+    restart: always
     environment:
-      GITLAB_ROOT_EMAIL: "${GITLAB_USER}@${TLD}"
+      GITLAB_ROOT_EMAIL: "${GITLAB_USER}@${LOCAL_DOMAIN}"
       GITLAB_ROOT_PASSWORD: "${GITLAB_PASSWORD}"
     volumes:
-      - gitlab-config:/etc/gitlab
-      - gitlab-data:/var/opt/gitlab
-      - gitlab-log:/var/log/gitlab
+      - config:/etc/gitlab
+      - data:/var/opt/gitlab
+      - log:/var/log/gitlab
+    dns:
+      - ${NS1_IP}
+      - ${NS2_IP}
+    dns_search: ${LOCAL_DOMAIN}
+    networks:
+      net1:
+        ipv4_address: ${THIS_IP}
 
 volumes:
-  gitlab-config:
-  gitlab-data:
-  gitlab-log:
+  config:
+  data:
+  log:
+
+networks:
+  net1:
+    external: true
+    name: ${LAN_NAME}
