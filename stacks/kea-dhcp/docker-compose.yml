@@ -1,28 +1,28 @@
 ---
 name: kea-dhcp
 services:
-  kea-db:
-    hostname: kea-db.${LOCAL_DOMAIN}
-    domainname: ${LOCAL_DOMAIN}
-    container_name: kea-db
-    image: postgres
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "psql -U keadb -d keadb -c 'SELECT version FROM schema_version'"]
-    environment:
-      POSTGRES_PASSWORD: ${KEA_DB_PASSWORD}
-      POSTGRES_USER: ${KEA_DB_USER}
-    volumes:
-      - kea-db:/var/lib/posgresql
-        #      - type: bind
-        #source: ./kea-dhcp/initdb
-        #target: /docker-entrypoint-initdb.d
-    dns:
-      - ${NS1_IP}
-      - ${NS2_IP}
-    dns_search: ${LOCAL_DOMAIN}
-    networks:
-      kea-backend:
+#  kea-db:
+#    hostname: kea-db.${LOCAL_DOMAIN}
+#    domainname: ${LOCAL_DOMAIN}
+#    container_name: kea-db
+#    image: postgres
+#    restart: always
+#    healthcheck:
+#      test: ["CMD-SHELL", "psql -U keadb -d keadb -c 'SELECT version FROM schema_version'"]
+#    environment:
+#      POSTGRES_PASSWORD: ${KEA_DB_PASSWORD}
+#      POSTGRES_USER: ${KEA_DB_USER}
+#    volumes:
+#      - kea-db:/var/lib/posgresql
+#        #      - type: bind
+#        #source: ./kea-dhcp/initdb
+#        #target: /docker-entrypoint-initdb.d
+#    dns:
+#      - ${NS1_IP}
+#      - ${NS2_IP}
+#    dns_search: ${LOCAL_DOMAIN}
+#    networks:
+#      kea-backend:
 
   kea-dhcp4:
     hostname: kea-dhcp4.${LOCAL_DOMAIN}
@@ -30,9 +30,9 @@ services:
     container_name: kea-dhcp4
     image: docker.cloudsmith.io/isc/docker/kea-dhcp4:${KEA_VERSION}
     restart: always
-    depends_on:  # delay start until database is ready
-      kea-db:
-        condition: service_healthy
+#    depends_on:  # delay start until database is ready
+#      kea-db:
+#        condition: service_healthy
     volumes:
       - kea-conf:/etc/kea
       - kea4-var:/var/lib/kea
