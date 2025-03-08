@@ -4,9 +4,9 @@ services:
   gitlab:
     hostname: gitlab.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
+    container_name: gitlab
     image: 'gitlab/gitlab-ce:latest'
     restart: unless-stopped
-    container_name: gitlab
     environment:
       GITLAB_ROOT_EMAIL: "${GITLAB_USER}@${LOCAL_DOMAIN}"
       GITLAB_ROOT_PASSWORD: "${GITLAB_PASSWORD}"
