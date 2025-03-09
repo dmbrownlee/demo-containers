@@ -6,7 +6,7 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-be
     image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
     restart: unless-stopped
-    command: server --console-address ":9001" http://minio1/data{1...2}
+    command: server --console-address ":9001" http://${COMPOSE_PROJECT_NAME}-be/data{1...2}
     expose:
       - "9000"
       - "9001"
