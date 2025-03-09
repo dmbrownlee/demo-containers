@@ -4,7 +4,7 @@ services:
     hostname: aptcache.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
     container_name: apt-cacher-ng
-    image: docker.io/dmbrownlee/apt-cacher-ng:latest
+    #image: docker.io/dmbrownlee/apt-cacher-ng:latest
     restart: unless-stopped
     build:
       context: .
