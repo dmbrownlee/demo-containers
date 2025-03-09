@@ -1,5 +1,4 @@
 ---
-name: gitlab
 services:
   gitlab:
     hostname: gitlab.${LOCAL_DOMAIN}

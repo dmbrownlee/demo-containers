@@ -1,5 +1,4 @@
 ---
-name: netbootxyz
 services:
   netbootxyz:
     hostname: netbootxyz.${LOCAL_DOMAIN}

@@ -1,9 +1,9 @@
-version: '3.7'
+---
 services:
-  minio1:
-    hostname: minio1.${LOCAL_DOMAIN}
+  minio:
+    hostname: ${COMPOSE_PROJECT_NAME}-be.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
-    container_name: minio1
+    container_name: ${COMPOSE_PROJECT_NAME}-be
     image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
     restart: unless-stopped
     command: server --console-address ":9001" http://minio1/data{1...2}
@@ -29,15 +29,15 @@ services:
       minio-backend:
 
   nginx:
-    hostname: minio.${LOCAL_DOMAIN}
+    hostname: ${COMPOSE_PROJECT_NAME}.${LOCAL_DOMAIN}
     domainname: ${LOCAL_DOMAIN}
-    container_name: nginx
+    container_name: ${COMPOSE_PROJECT_NAME}-fe
     image: nginx:1.19.2-alpine
     restart: unless-stopped
     volumes:
       - nginx-conf:/etc/nginx:ro
     depends_on:
-      - minio1
+      - minio
     dns:
       - ${NS1_IP}
       - ${NS2_IP}

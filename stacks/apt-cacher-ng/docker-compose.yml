@@ -1,5 +1,4 @@
 ---
-name: apt-cacher-ng
 services:
   apt-cacher-ng:
     hostname: aptcache.${LOCAL_DOMAIN}
