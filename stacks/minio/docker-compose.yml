@@ -1,7 +1,7 @@
 ---
 services:
   minio:
-    hostname: ${COMPOSE_PROJECT_NAME}-be.${LOCAL_DOMAIN}
+    hostname: ${COMPOSE_PROJECT_NAME}-be
     domainname: ${LOCAL_DOMAIN}
     container_name: ${COMPOSE_PROJECT_NAME}-be
     image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
@@ -29,7 +29,7 @@ services:
       minio-backend:
 
   nginx:
-    hostname: ${COMPOSE_PROJECT_NAME}.${LOCAL_DOMAIN}
+    hostname: ${COMPOSE_PROJECT_NAME}
     domainname: ${LOCAL_DOMAIN}
     container_name: ${COMPOSE_PROJECT_NAME}-fe
     image: nginx:1.19.2-alpine

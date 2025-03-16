@@ -1,7 +1,7 @@
 ---
 services:
   apt-cacher-ng:
-    hostname: aptcache.${LOCAL_DOMAIN}
+    hostname: aptcache
     domainname: ${LOCAL_DOMAIN}
     container_name: apt-cacher-ng
     #image: docker.io/dmbrownlee/apt-cacher-ng:latest

@@ -1,7 +1,7 @@
 ---
 services:
   gitlab:
-    hostname: gitlab.${LOCAL_DOMAIN}
+    hostname: gitlab
     domainname: ${LOCAL_DOMAIN}
     container_name: gitlab
     image: 'gitlab/gitlab-ce:latest'

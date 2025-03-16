@@ -1,7 +1,7 @@
 ---
 services:
   mail:
-    hostname: ${COMPOSE_PROJECT_NAME}.${LOCAL_DOMAIN}
+    hostname: ${COMPOSE_PROJECT_NAME}
     domainname: ${LOCAL_DOMAIN}
     container_name: ${COMPOSE_PROJECT_NAME}
     image: ghcr.io/docker-mailserver/docker-mailserver:latest

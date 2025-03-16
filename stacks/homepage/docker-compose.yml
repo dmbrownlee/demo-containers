@@ -1,7 +1,7 @@
 ---
 services:
   homepage:
-    hostname: homepage.${LOCAL_DOMAIN}
+    hostname: homepage
     domainname: ${LOCAL_DOMAIN}
     container_name: homepage
     image: ghcr.io/gethomepage/homepage:latest

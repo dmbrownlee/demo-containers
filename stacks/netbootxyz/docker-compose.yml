@@ -1,7 +1,7 @@
 ---
 services:
   netbootxyz:
-    hostname: netbootxyz.${LOCAL_DOMAIN}
+    hostname: netbootxyz
     domainname: ${LOCAL_DOMAIN}
     container_name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz

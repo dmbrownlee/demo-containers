@@ -1,7 +1,7 @@
 ---
 services:
   pgadmin:
-    hostname: pgadmin.${LOCAL_DOMAIN}
+    hostname: pgadmin
     domainname: ${LOCAL_DOMAIN}
     container_name: pgadmin
     image: dpage/pgadmin4
