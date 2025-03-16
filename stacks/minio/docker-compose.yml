@@ -1,15 +1,18 @@
 ---
+version: "3.8"
+
 services:
   minio:
-    hostname: ${COMPOSE_PROJECT_NAME}-be
+    hostname: ${COMPOSE_PROJECT_NAME}
     domainname: ${LOCAL_DOMAIN}
-    container_name: ${COMPOSE_PROJECT_NAME}-be
-    image: quay.io/minio/minio:RELEASE.2025-02-07T23-21-09Z
+    image: minio/minio:latest
+    container_name: ${COMPOSE_PROJECT_NAME}
     restart: unless-stopped
-    command: server --console-address ":9001" http://${COMPOSE_PROJECT_NAME}-be/data{1...2}
-    expose:
-      - "9000"
-      - "9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - data:/data
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -18,26 +21,10 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    volumes:
-      - data1-1:/data1
-      - data1-2:/data2
-    dns:
-      - ${NS1_IP}
-      - ${NS2_IP}
-    dns_search: ${LOCAL_DOMAIN}
-    networks:
-      minio-backend:
-
-  nginx:
-    hostname: ${COMPOSE_PROJECT_NAME}
-    domainname: ${LOCAL_DOMAIN}
-    container_name: ${COMPOSE_PROJECT_NAME}-fe
-    image: nginx:1.19.2-alpine
-    restart: unless-stopped
-    volumes:
-      - nginx-conf:/etc/nginx:ro
-    depends_on:
-      - minio
+    command: server /data --console-address ":9001"
+    expose:
+      - "9000"
+      - "9001"
     dns:
       - ${NS1_IP}
       - ${NS2_IP}
@@ -45,15 +32,11 @@ services:
     networks:
       net1:
         ipv4_address: ${THIS_IP}
-      minio-backend:
 
 volumes:
-  data1-1:
-  data1-2:
-  nginx-conf:
+  data:
 
 networks:
   net1:
     external: true
     name: ${LAN_NAME}
-  minio-backend:
