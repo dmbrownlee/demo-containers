@@ -7,7 +7,7 @@ services:
     image: ghcr.io/gethomepage/homepage:latest
     restart: unless-stopped
     environment:
-      - HOMEPAGE_ALLOWED_HOSTS="homepage.${LOCAL_DOMAIN}:3000"
+      - HOMEPAGE_ALLOWED_HOSTS="homepage.${LOCAL_DOMAIN}"
     volumes:
       - config:/app/config
       - images:/app/public/images
